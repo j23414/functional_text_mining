@@ -66,17 +66,20 @@ class PmcArticle():
 
     def get_date(self, fillday=True):
         if self.year:
-            date = self.year
+            year = self.year
         else:
             print("Year missing for PMC{self.pmc} - setting date to 'NaN'", file=sys.stderr)
-            return "UNKNOWN"
+            return "NaN"
         if self.month:
-            date += self.month
+            month = self.month
             if self.day:
-                date += self.day
+                day = self.day
+            else:
+                day = "01"
         else:
-            date += "01-01"
-        return date
+            day = "01"
+            month = "01"
+        return f'{year}-{month}-{day}'
 
     def _nanAsNeeded(self, name, value):
         if not value is None:
