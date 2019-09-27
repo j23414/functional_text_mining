@@ -3,6 +3,7 @@ The MLStipper and strip_tags functions are borrowed verbatim from Eloff (stackov
 """
 
 import xml.etree.ElementTree as et
+import sys
 
 import nltk.corpus.reader.xmldocs as xml
 from html.parser import HTMLParser
@@ -31,6 +32,14 @@ class Author():
         self.email = author.findtext("./address/email")
         self.is_corresponding_author = "corrsep" in author.attrib
 
+    def fullname(self):
+        if self.given_names and self.surname:
+            return f"{self.given_names} {self.surname}"
+        elif self.surname:
+            return self.surname
+        else:
+            return "where the fuck is your goddamn name"
+
 class PmcArticle():
 
     def __init__(self, article):
@@ -55,6 +64,48 @@ class PmcArticle():
         #      pass
         #  self.body = "\n".join(strip_tags(p) for p in article.findall(".//p"))
 
+    def get_date(self, fillday=True):
+        if self.year:
+            date = self.year
+        else:
+            print("Year missing for PMC{self.pmc} - setting date to 'NaN'", file=sys.stderr)
+            return "UNKNOWN"
+        if self.month:
+            date += self.month
+            if self.day:
+                date += self.day
+        else:
+            date += "01-01"
+        return date
+
+    def _nanAsNeeded(self, name, value):
+        if not value is None:
+            return value
+        else:
+            print(f"{name} is missing for PMC{self.pmc} - setting {name} to 'Nan'", file=sys.stderr)
+            return "NaN"
+
+    def get_title(self):
+        return self._nanAsNeeded("title", self.title)
+
+    def get_pmid(self):
+        return self._nanAsNeeded("pmid", self.pmid)
+
+    def get_pmc(self):
+        if not self.pmc is None:
+            return ("PMC" + self.pmc)
+        else:
+            print("Found an article entry that is missing PMC, this wasn't suppose to happen", file=sys.stderr)
+            sys.exit(1)
+
+    def get_doi(self):
+        return self._nanAsNeeded("doi", self.doi)
+
+    def get_authors(self):
+        return self._nanAsNeeded("authors", self.authors)
+
+    def get_journal_name(self):
+        return self._nanAsNeeded("journal_name", self.journal_name)
 
 class PmcCorpusReader(xml.XMLCorpusReader):
 

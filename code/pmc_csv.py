@@ -31,14 +31,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     for article in pmcCorpus.articles():
-        authorList = ", ".join([f'{author.given_names} {author.surname}' for author in article.authors])
+
+        authorList = ", ".join([author.fullname() for author in article.authors])
+
         row = (
-            article.pmid,
-            "PMC" + article.pmc,
-            article.doi,
-            "-".join([article.year, article.month, article.day]),
-            article.title,
-            article.journal_name,
+            article.get_pmid(),
+            "PMC" + article.get_pmc(),
+            article.get_doi(),
+            article.get_date(),
+            article.get_title(),
+            article.get_journal_name(),
             authorList
         )
         print("\t".join(row))
