@@ -1,13 +1,10 @@
-"""
-The MLStipper and strip_tags functions are borrowed verbatim from Eloff (stackoverflow #753052)
-"""
-
 import xml.etree.ElementTree as et
 import sys
 
 import nltk.corpus.reader.xmldocs as xml
 from html.parser import HTMLParser
 
+# from Eloff (stackoverflow #753052)
 class MLStripper(HTMLParser):
     def __init__(self):
         self.reset()
@@ -19,6 +16,7 @@ class MLStripper(HTMLParser):
     def get_data(self):
         return ''.join(self.fed).strip()
 
+# from Eloff (stackoverflow #753052)
 def strip_tags(xmlObj):
     s = MLStripper()
     s.feed(et.tostring(xmlObj).decode())
