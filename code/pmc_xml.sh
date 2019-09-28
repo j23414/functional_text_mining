@@ -39,4 +39,4 @@ fi
 cat .pmtmp/*.xml 
 
 # ======================= Cleanup
-[[ -d .pmtmp ]] && rm -rf .pmtmp
+#[[ -d .pmtmp ]] && rm -rf .pmtmp

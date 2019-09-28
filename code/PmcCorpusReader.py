@@ -81,7 +81,7 @@ class PmcArticle():
 
     def _nanAsNeeded(self, name, value):
         if not value is None:
-            return value
+            return value.replace('\n',' ').replace('\r',' ')
         else:
             print(f"{name} is missing for PMC{self.pmc} - setting {name} to 'Nan'", file=sys.stderr)
             return "NaN"

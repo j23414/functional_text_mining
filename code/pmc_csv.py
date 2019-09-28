@@ -35,12 +35,12 @@ if __name__ == '__main__':
         authorList = ", ".join([author.fullname() for author in article.authors])
 
         row = (
-            article.get_pmid(),
-            article.get_pmc(),
-            article.get_doi(),
             article.get_date(),
-            article.get_title(),
+            article.get_pmc(),
+            article.get_pmid(),
+            article.get_doi(),
             article.get_journal_name(),
-            authorList
+            article.get_title(),
+            authorList.replace('\n',' ').replace('\r',' ')
         )
         print("\t".join(row))
