@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
         row = (
             article.get_pmid(),
-            "PMC" + article.get_pmc(),
+            article.get_pmc(),
             article.get_doi(),
             article.get_date(),
             article.get_title(),
