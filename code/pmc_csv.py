@@ -4,12 +4,20 @@ import sys
 import re
 import PmcCorpusReader as pmc
 
+
 def usage():
     print("USAGE  pmc_csv.py <root> <fileid_expr>", file=sys.stderr)
-    print(" where  <root> is the directory where the PMC XML files are written", file=sys.stderr)
-    print("        <fileid_expr> is a Perl-style regular expression that should match one or more files in <root>", file=sys.stderr)
+    print(
+        " where  <root> is the directory where the PMC XML files are written",
+        file=sys.stderr,
+    )
+    print(
+        "        <fileid_expr> is a Perl-style regular expression that should match one or more files in <root>",
+        file=sys.stderr,
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     if len(sys.argv) == 1 or sys.argv[1] in {"-h", "--help", "-?"}:
         usage()
@@ -25,9 +33,12 @@ if __name__ == '__main__':
     try:
         pmcCorpus = pmc.PmcCorpusReader(root=sys.argv[1], fileids=sys.argv[2])
     except re.error as e:
-        print(f"Bad regular expression ('{sys.argv[2]}'), expect a Perl-style regex like '.*.xml':", file=sys.stderr)
+        print(
+            f"Bad regular expression ('{sys.argv[2]}'), expect a Perl-style regex like '.*.xml':",
+            file=sys.stderr,
+        )
         print("  UNIX globs like '*.xml' will NOT work", file=sys.stderr)
-        print(f'  {str(e)}', file=sys.stderr)
+        print(f"  {str(e)}", file=sys.stderr)
         sys.exit(1)
 
     for article in pmcCorpus.articles():
@@ -41,6 +52,6 @@ if __name__ == '__main__':
             article.get_doi(),
             article.get_journal_name(),
             article.get_title(),
-            authorList.replace('\n',' ').replace('\r',' ')
+            authorList.replace("\n", " ").replace("\r", " "),
         )
         print("\t".join(row))
