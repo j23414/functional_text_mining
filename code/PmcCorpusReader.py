@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as et
 import sys
+import re
 
 import nltk.corpus.reader.xmldocs as xml
 from html.parser import HTMLParser
@@ -20,10 +21,14 @@ class MLStripper(HTMLParser):
 
 
 # from Eloff (stackoverflow #753052)
-def strip_tags(xmlObj):
+def strip_tags(xmlObj, clean=False):
     s = MLStripper()
     s.feed(et.tostring(xmlObj).decode())
-    return s.get_data()
+    out = s.get_data
+    if clean:
+        return re.sub("\s+", " ", out.strip())
+    else:
+        return out
 
 
 class Author:
@@ -42,6 +47,35 @@ class Author:
         else:
             return "where the fuck is your goddamn name"
 
+class Entry:
+    def __init__(self, entry):
+        try:
+            self.citationStr = strip_tags(entry.find("./mixed-citation"), clean=True)
+        except AttributeError:
+            el = entry.find("./element-citation")
+            self.authors = [(author.findtext("surname"), author.findtext("given-names"))
+                             for author in el.findall("person-group/name")]
+            try:
+                self.title = strip_tags(el.find("article-title"), clean=True)
+            except AttributeError:
+                self.title = "A story about you"
+            try:
+                self.journal = strip_tags(el.find("source"))
+            except AttributeError:
+                self.journal = "The Bible"
+            self.year = el.findtext("year")
+            self.citationStr = ', '.join([f'{a[1]} {a[0]}' for a in self.authors]) + f' ({self.year}) {self.year}'
+
+class Bibliography:
+    def __init__(self, entries):
+        self.entries = {self.make_entry(i,entry) : Entry(entry) for i,entry in enumerate(entries)}
+
+    def make_entry(self, i, entry):
+        try:
+            refid = entry.attrib["id"]
+        except KeyError:
+            refid = str(i)
+        return refid
 
 class PmcArticle:
     def __init__(self, article):
@@ -66,6 +100,10 @@ class PmcArticle:
         self.journal_name = article.findtext(
             "./front/journal-meta/journal-title-group/journal-title"
         )
+        self.abstract = strip_tags(article.find("./front/article-meta/abstract"))
+        self.sections = [strip_tags(sec) for sec in article.findall("./body/sec//title")]
+        self.paras = [strip_tags(para) for para in article.findall("./body/sec//p")]
+        self.bibliography = Bibliography(article.findall("back/ref-list/ref"))
 
         #  try:
         #      self.acknowledgements = article.findtext(article, "./back/ack/p")
@@ -105,6 +143,18 @@ class PmcArticle:
 
     def get_title(self):
         return self._nanAsNeeded("title", self.title)
+
+    def get_abstract(self):
+        return self._nanAsNeeded("abstract", self.abstract)
+
+    def get_sections(self):
+        return [self._nanAsNeeded("sections", sec) for sec in self.sections]
+
+    def get_paras(self):
+        return [self._nanAsNeeded("paras", para) for para in self.paras]
+
+    def get_bibliography(self):
+        return self.bibliography
 
     def get_pmid(self):
         return self._nanAsNeeded("pmid", self.pmid)
