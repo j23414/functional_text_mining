@@ -6,9 +6,9 @@ Apply functional programming to text mining. The bash scripts are included to de
 
 ```
 code/
-  |_ pmc_ids.sh      # given a search term, return article IDs
-  |_ pmc_xml.sh      # given IDs, return the fulltext in XML
-  |_ pmc_pdf.sh      # given IDs, return pdf articles
+  |_ pmc_ids.sh      # given a search term, return article IDs (searchterm_str) -> pmc_ids_int
+  |_ pmc_xml.sh      # given IDs, return the fulltext in XML (pmc_ids_int) -> fulltext_xml
+  |_ pmc_pdf.sh      # given IDs, return pdf articles (pmc_ids_int) -> fulltext_pdf
   
 data/                
   |_ neo4j.ids       # example article IDs
