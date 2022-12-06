@@ -12,20 +12,20 @@ FILE=100;
 [[ -d .pmtmp ]] && rm -rf .pmtmp
 mkdir .pmtmp
 
-IDLIST=$1
+IDLIST=${1?PubMed Central List of IDs required.}
+
 TOT=`grep -cv "^$" ${IDLIST}`
 while read IDS; do
-    if [ $NUM -ge 100 ]
-    then
-	echo "===== Fetching ids $((FILE-99)) to $FILE of ${TOT} total IDs" >&2
-	curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc${QUERY}&retmode=xml&tool=ebot" > .pmtmp/${FILE}.xml
-	sleep 0.2;
-	NUM=1;
-	QUERY="&id=${IDS}";
-	FILE=$((FILE+100));
+    if [[ $NUM -ge 100 ]]; then
+	    echo "===== Fetching ids $((FILE-99)) to $FILE of ${TOT} total IDs" >&2
+	    curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc${QUERY}&retmode=xml&tool=ebot" > .pmtmp/${FILE}.xml
+	    sleep 0.2;
+	    NUM=1;
+	    QUERY="&id=${IDS}";
+	    FILE=$((FILE+100));
     else
-	NUM=$((NUM+1))
-	QUERY="$QUERY&id=${IDS}"
+	    NUM=$((NUM+1))
+	    QUERY="$QUERY&id=${IDS}"
     fi
 done < ${IDLIST}
 

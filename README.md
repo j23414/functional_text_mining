@@ -5,7 +5,7 @@ Apply functional programming to text mining. The bash scripts are included to de
 **File Structure:**
 
 ```
-code/
+bin/
   |_ pmc_ids.sh      # given a search term, return article IDs (searchterm_str) -> pmc_ids_int
   |_ pmc_xml.sh      # given IDs, return the fulltext in XML (pmc_ids_int) -> fulltext_xml
   |_ pmc_pdf.sh      # given IDs, return pdf articles (pmc_ids_int) -> fulltext_pdf
